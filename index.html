@@ -180,6 +180,7 @@
       <h2>Все разделы одним списком</h2>
       <button id="csv" class="ghost" type="button">Скачать CSV</button>
     </div>
+    <p class="hint">UTM-метки общие, а кампания подставляется по разделу автоматически: <code>damyfloor_catalog</code>, <code>damyfloor_articles</code> и т. д.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>Раздел</th><th>Ссылка</th><th></th></tr></thead>
@@ -292,14 +293,21 @@ function params(){
   };
 }
 
-function buildLink(path){
+function buildLink(path, campaignOverride){
   if (!path) return '';
   try {
     const u = new URL(path, BASE);
     const p = params();
+    if (campaignOverride !== undefined) p.utm_campaign = campaignOverride;
     UTM_KEYS.forEach(k => { if (p[k]) u.searchParams.set(k, p[k]); });
     return u.toString();
   } catch(e){ return ''; }
+}
+
+function sectionCampaign(slug){
+  const base = $('campaign').value.trim();
+  if (campaignAuto || !base) return 'damyfloor_' + slug;
+  return base + '_' + slug;
 }
 
 function currentPath(){
@@ -373,14 +381,14 @@ function update(){
     td1.textContent = s.name;
     const td2 = document.createElement('td');
     const code = document.createElement('code');
-    code.textContent = buildLink(s.path);
+    code.textContent = buildLink(s.path, sectionCampaign(s.slug));
     td2.appendChild(code);
     const td3 = document.createElement('td');
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'mini';
     b.textContent = 'Копировать';
-    b.addEventListener('click', () => copy(buildLink(s.path), b));
+    b.addEventListener('click', () => copy(buildLink(s.path, sectionCampaign(s.slug)), b));
     td3.appendChild(b);
     tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
     tbody.appendChild(tr);
@@ -460,7 +468,7 @@ function init(){
 
   $('csv').addEventListener('click', () => {
     const rows = [['Раздел','Ссылка']];
-    SECTIONS.forEach(s => rows.push([s.name, buildLink(s.path)]));
+    SECTIONS.forEach(s => rows.push([s.name, buildLink(s.path, sectionCampaign(s.slug))]));
     const csv = '\uFEFF' + rows.map(r => r.map(x => '"' + String(x).replace(/"/g,'""') + '"').join(';')).join('\r\n');
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
     const a = document.createElement('a');
