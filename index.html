@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UTM-конструктор DAMY FLOOR</title>
+<style>
+  :root{
+    --bg:#0d0e10; --card:#16181c; --line:#2a2d33; --line2:#343841;
+    --text:#f3f1ea; --muted:#9aa0a9; --gold:#c8a24a; --gold2:#e7c877;
+    --danger:#b4453f;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 64px}
+  .brand{font-size:12px;letter-spacing:.18em;color:var(--gold);font-weight:700}
+  .brand span{color:var(--text);border:1px solid var(--line2);padding:2px 6px;border-radius:4px;margin-left:6px;letter-spacing:.08em}
+  h1{font-size:30px;line-height:1.15;margin:10px 0 8px;font-weight:650}
+  .hero p{color:var(--muted);font-size:14px;line-height:1.55;max-width:760px;margin:0}
+  .grid{display:grid;grid-template-columns:1.12fr .88fr;gap:18px;margin-top:22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  h2{font-size:16px;margin:0 0 4px;font-weight:650}
+  h3{font-size:14px;margin:0 0 8px}
+  label{display:block;font-size:11px;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.07em}
+  input,select,textarea{
+    width:100%;background:#0f1115;border:1px solid #30343b;color:var(--text);
+    border-radius:9px;padding:10px 12px;font:inherit;font-size:14px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  textarea{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;resize:vertical}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .hint{font-size:12px;color:#8f949d;line-height:1.45;margin:8px 0 0}
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+  .presets button,.example button{
+    background:#1e2126;border:1px solid var(--line2);color:#d8dbe0;border-radius:999px;
+    padding:6px 11px;font-size:12px;cursor:pointer;
+  }
+  .presets button:hover,.example button:hover{border-color:var(--gold);color:var(--gold2)}
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  button.primary{background:var(--gold);color:#141414;border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer}
+  button.primary:hover{background:var(--gold2)}
+  button.ghost{background:transparent;color:#e8e6df;border:1px solid #3a3e46;border-radius:9px;padding:11px 16px;cursor:pointer}
+  button.ghost:hover{border-color:#5a5f69}
+  .result textarea{min-height:106px}
+  .qrbox{display:flex;justify-content:center;margin-top:16px}
+  #qr{width:176px;height:176px;border-radius:10px;background:#fff;padding:6px}
+  .universal{margin-top:18px;border-color:#4a3d1f;background:linear-gradient(180deg,#1a1812,#16181c)}
+  .universal h2{color:var(--gold2)}
+  .universal p{color:#b9b3a3;font-size:13px;line-height:1.55;margin:6px 0 0}
+  .example{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted)}
+  .all{margin-top:18px}
+  .allhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .allhead h2{margin:0}
+  .tablewrap{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{position:sticky;top:0;background:#1b1e23;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 12px;z-index:1}
+  td{border-top:1px solid #24272c;padding:9px 12px;vertical-align:middle}
+  td:first-child{white-space:nowrap;color:#e6e3da}
+  td code{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:560px;color:#cfd3da;font-size:11.5px;background:none;padding:0}
+  button.mini{background:#1e2126;border:1px solid var(--line2);color:#d8dbe0;border-radius:7px;padding:5px 9px;font-size:11.5px;cursor:pointer;white-space:nowrap}
+  button.mini:hover{border-color:var(--gold);color:var(--gold2)}
+  code{background:#22252b;padding:1px 5px;border-radius:4px;font-size:.92em}
+  .how{margin:26px 0 0;color:#a9adb6;font-size:13px;line-height:1.6}
+  .how ol{margin:8px 0 0;padding-left:20px}
+  footer{margin-top:30px;color:#6f747d;font-size:12px;border-top:1px solid #24272c;padding-top:16px;line-height:1.5}
+  #toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+    background:var(--gold);color:#111;padding:10px 16px;border-radius:8px;font-size:13px;
+    font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:99;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .error{border-color:var(--danger)!important}
+  @media(max-width:820px){
+    .grid{grid-template-columns:1fr}
+    .two{grid-template-columns:1fr}
+    h1{font-size:25px}
+    td code{max-width:220px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="brand">DAMY FLOOR <span>UTM</span></div>
+    <h1>UTM-ссылки для любого раздела</h1>
+    <p>Выберите раздел, заполните метки — готовая ссылка появится сразу. Универсальная ссылка ниже работает для любого раздела: меняете только параметр <code>to</code>, метки подставляются автоматически.</p>
+  </header>
+
+  <main class="grid">
+    <section class="card form">
+      <h2>1. Раздел</h2>
+      <label for="section">Раздел сайта</label>
+      <select id="section"></select>
+
+      <label for="custom">Или конкретная страница</label>
+      <input id="custom" placeholder="/articles/chto-delat-esli-laminat-vzdulsya/">
+      <p class="hint">Можно вставить полную ссылку с damyfloor.ru — путь подставится сам. Если поле заполнено, оно важнее выбранного раздела.</p>
+
+      <h2 style="margin-top:22px">2. Метки</h2>
+      <div class="presets" id="presets"></div>
+
+      <div class="two">
+        <div>
+          <label for="source">utm_source</label>
+          <input id="source" list="sources" placeholder="yandex">
+        </div>
+        <div>
+          <label for="medium">utm_medium</label>
+          <input id="medium" list="mediums" placeholder="cpc">
+        </div>
+      </div>
+
+      <label for="campaign">utm_campaign</label>
+      <input id="campaign" placeholder="catalog_brand">
+
+      <div class="two">
+        <div>
+          <label for="content">utm_content</label>
+          <input id="content" placeholder="baner_1">
+        </div>
+        <div>
+          <label for="term">utm_term</label>
+          <input id="term" placeholder="ламинат">
+        </div>
+      </div>
+
+      <datalist id="sources">
+        <option value="yandex"></option><option value="google"></option>
+        <option value="vk"></option><option value="telegram"></option>
+        <option value="email"></option><option value="qr"></option>
+        <option value="banner"></option><option value="partner"></option>
+      </datalist>
+      <datalist id="mediums">
+        <option value="cpc"></option><option value="social"></option>
+        <option value="email"></option><option value="organic"></option>
+        <option value="referral"></option><option value="offline"></option>
+        <option value="display"></option>
+      </datalist>
+
+      <div class="actions">
+        <button id="reset" class="ghost" type="button">Сбросить</button>
+        <button id="copyMain" class="primary" type="button">Скопировать ссылку</button>
+      </div>
+    </section>
+
+    <section class="card result">
+      <h2>Готовая ссылка</h2>
+      <textarea id="mainLink" readonly rows="4" aria-label="Готовая UTM-ссылка"></textarea>
+      <div class="actions">
+        <button id="openMain" class="primary" type="button">Открыть</button>
+        <button id="copyMain2" class="ghost" type="button">Копировать</button>
+      </div>
+      <div class="qrbox"><img id="qr" alt="QR-код ссылки"></div>
+      <p class="hint">QR — для офлайн-материалов: визиток, образцов, стендов, презентаций.</p>
+    </section>
+  </main>
+
+  <section class="card universal">
+    <h2>Универсальная ссылка</h2>
+    <p>Одна ссылка на все разделы. Открывает <code>damyfloor.ru</code> и сама подставляет UTM. Замените <code>to</code> на нужный раздел — остальное уже в ссылке.</p>
+    <textarea id="universal" readonly rows="3" aria-label="Универсальная UTM-ссылка"></textarea>
+    <div class="actions">
+      <button id="copyUniversal" class="primary" type="button">Скопировать универсальную</button>
+    </div>
+    <div class="example">
+      <span>Подставить раздел:</span>
+      <button type="button" data-to="/catalog/">/catalog/</button>
+      <button type="button" data-to="/articles/">/articles/</button>
+      <button type="button" data-to="/calculator/">/calculator/</button>
+      <button type="button" data-to="/contacts/">/contacts/</button>
+    </div>
+  </section>
+
+  <section class="card all">
+    <div class="allhead">
+      <h2>Все разделы одним списком</h2>
+      <button id="csv" class="ghost" type="button">Скачать CSV</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Раздел</th><th>Ссылка</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="how">
+    <h3>Как пользоваться</h3>
+    <ol>
+      <li>Выберите раздел или вставьте ссылку на конкретную страницу.</li>
+      <li>Заполните <code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code>. <code>utm_content</code> и <code>utm_term</code> — по желанию.</li>
+      <li>Скопируйте готовую ссылку. Для рекламы удобнее универсальная: в ней достаточно менять <code>to</code>.</li>
+    </ol>
+  </section>
+
+  <footer>
+    UTM-метки не меняют содержимое страницы — они передают данные в Яндекс.Метрику и другие системы аналитики.
+    Для Яндекс.Директа: <code>yandex / cpc</code>. Для VK: <code>vk / social</code>. Для Telegram: <code>telegram / social</code>. Для QR: <code>qr / offline</code>.
+  </footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const BASE = 'https://damyfloor.ru';
+const PAGE = location.protocol === 'file:' ? location.href.split('?')[0] : location.origin + location.pathname;
+const UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+
+const SECTIONS = [
+  {name:'Главная', path:'/', slug:'home'},
+  {name:'Каталог', path:'/catalog/', slug:'catalog'},
+  {name:'Статьи', path:'/articles/', slug:'articles'},
+  {name:'Новости', path:'/news/', slug:'news'},
+  {name:'Калькулятор', path:'/calculator/', slug:'calculator'},
+  {name:'Контакты', path:'/contacts/', slug:'contacts'},
+  {name:'О компании', path:'/about/', slug:'about'},
+  {name:'Производство', path:'/production/', slug:'production'},
+  {name:'Команда', path:'/team/', slug:'team'},
+  {name:'Объекты', path:'/objects/', slug:'objects'},
+  {name:'Отзывы', path:'/reviews/', slug:'reviews'},
+  {name:'Акции', path:'/actions/', slug:'actions'},
+  {name:'Технологии', path:'/technologies/', slug:'technologies'},
+  {name:'Сертификаты', path:'/sertificates/', slug:'sertificates'},
+  {name:'Гарантия', path:'/warranty/', slug:'warranty'},
+  {name:'Инструкции', path:'/instructions/', slug:'instructions'},
+  {name:'База материалов', path:'/materials-database/', slug:'materials'},
+  {name:'FAQ', path:'/faq/', slug:'faq'},
+  {name:'Дилерам', path:'/dealers/', slug:'dealers'},
+  {name:'Дизайнерам', path:'/designers/', slug:'designers'},
+  {name:'Профессионалам', path:'/professionals/', slug:'professionals'},
+  {name:'Где купить', path:'/gde-kupit/', slug:'where-to-buy'},
+  {name:'Вакансии', path:'/vakansii/', slug:'vacancies'},
+  {name:'Академия мастеров', path:'/akademiya-masterov-damy-floor/', slug:'academy'},
+  {name:'Сертифицированные укладчики', path:'/sertifitsirovannye-ukladchiki-damyfloor/', slug:'installers'},
+  {name:'Чемпионат России', path:'/chempionat-rossii-masterov-ukladki-napolnykh-pokrytiy/', slug:'championship'},
+  {name:'Отзывы профессионалов', path:'/otzyvy-professionalov/', slug:'pro-reviews'},
+  {name:'Делаем мир лучше', path:'/delaem-mir-luchshe/', slug:'better-world'},
+  {name:'Цветовые капсулы', path:'/tsvetovye-kapsuly/', slug:'color-capsules'},
+  {name:'Рекламная поддержка', path:'/advertising-support/', slug:'ad-support'}
+];
+
+const PRESETS = [
+  {label:'Яндекс.Директ', source:'yandex', medium:'cpc'},
+  {label:'Google Ads', source:'google', medium:'cpc'},
+  {label:'VK', source:'vk', medium:'social'},
+  {label:'Telegram', source:'telegram', medium:'social'},
+  {label:'E-mail', source:'email', medium:'email'},
+  {label:'QR', source:'qr', medium:'offline'},
+  {label:'Партнёр', source:'partner', medium:'referral'}
+];
+
+const $ = id => document.getElementById(id);
+let campaignAuto = true;
+let toastTimer = null;
+
+function isAllowed(host){
+  return host === 'damyfloor.ru' || host.endsWith('.damyfloor.ru');
+}
+
+function normalizePath(raw){
+  let v = (raw || '').trim();
+  if (!v) return '/';
+  if (/^https?:\/\//i.test(v)){
+    try {
+      const u = new URL(v);
+      if (!isAllowed(u.hostname)) return null;
+      return u.pathname + u.search + u.hash;
+    } catch(e){ return null; }
+  }
+  if (v.startsWith('//')) v = v.slice(2);
+  if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(v)){
+    try {
+      const u = new URL('https://' + v);
+      if (!isAllowed(u.hostname)) return null;
+      return u.pathname + u.search + u.hash;
+    } catch(e){ return null; }
+  }
+  if (!v.startsWith('/')) v = '/' + v;
+  return v;
+}
+
+function params(){
+  return {
+    utm_source: $('source').value.trim(),
+    utm_medium: $('medium').value.trim(),
+    utm_campaign: $('campaign').value.trim(),
+    utm_content: $('content').value.trim(),
+    utm_term: $('term').value.trim()
+  };
+}
+
+function buildLink(path){
+  if (!path) return '';
+  try {
+    const u = new URL(path, BASE);
+    const p = params();
+    UTM_KEYS.forEach(k => { if (p[k]) u.searchParams.set(k, p[k]); });
+    return u.toString();
+  } catch(e){ return ''; }
+}
+
+function currentPath(){
+  const custom = $('custom').value.trim();
+  if (custom) return normalizePath(custom);
+  return $('section').value || '/';
+}
+
+function universalLink(path){
+  const p = params();
+  const q = new URLSearchParams();
+  q.set('to', path || '/');
+  UTM_KEYS.forEach(k => { if (p[k]) q.set(k, p[k]); });
+  return PAGE + '?' + q.toString();
+}
+
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+async function copy(text, btn){
+  if (!text) { toast('Ссылка пока не готова'); return; }
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(err){}
+    ta.remove();
+  }
+  if (btn){
+    const old = btn.textContent;
+    btn.textContent = 'Скопировано';
+    setTimeout(() => { btn.textContent = old; }, 1200);
+  }
+  toast('Скопировано');
+}
+
+function update(){
+  const path = currentPath();
+  const link = buildLink(path);
+  const main = $('mainLink');
+  const uni = $('universal');
+
+  if (!path || !link){
+    main.value = 'Поддерживается только damyfloor.ru — проверьте ссылку.';
+    main.classList.add('error');
+    uni.value = '';
+    $('qr').style.display = 'none';
+    return;
+  }
+  main.classList.remove('error');
+  main.value = link;
+  uni.value = universalLink(path);
+  $('qr').style.display = 'block';
+  $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data=' + encodeURIComponent(link);
+
+  const tbody = $('rows');
+  tbody.innerHTML = '';
+  SECTIONS.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td');
+    td1.textContent = s.name;
+    const td2 = document.createElement('td');
+    const code = document.createElement('code');
+    code.textContent = buildLink(s.path);
+    td2.appendChild(code);
+    const td3 = document.createElement('td');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mini';
+    b.textContent = 'Копировать';
+    b.addEventListener('click', () => copy(buildLink(s.path), b));
+    td3.appendChild(b);
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+    tbody.appendChild(tr);
+  });
+}
+
+function init(){
+  const sel = $('section');
+  SECTIONS.forEach((s, i) => {
+    const o = document.createElement('option');
+    o.value = s.path;
+    o.textContent = s.name + ' — ' + s.path;
+    o.dataset.slug = s.slug;
+    sel.appendChild(o);
+  });
+  sel.selectedIndex = 0;
+  $('campaign').value = 'damyfloor_home';
+
+  const presets = $('presets');
+  PRESETS.forEach(p => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = p.label;
+    b.addEventListener('click', () => {
+      $('source').value = p.source;
+      $('medium').value = p.medium;
+      update();
+    });
+    presets.appendChild(b);
+  });
+
+  sel.addEventListener('change', () => {
+    $('custom').value = '';
+    const opt = sel.selectedOptions[0];
+    if (campaignAuto && opt) $('campaign').value = 'damyfloor_' + opt.dataset.slug;
+    update();
+  });
+
+  $('custom').addEventListener('input', () => {
+    if ($('custom').value.trim()) sel.value = '';
+    update();
+  });
+
+  ['source','medium','campaign','content','term'].forEach(id => {
+    $(id).addEventListener('input', () => {
+      if (id === 'campaign') campaignAuto = false;
+      update();
+    });
+  });
+
+  $('reset').addEventListener('click', () => {
+    $('source').value = '';
+    $('medium').value = '';
+    $('campaign').value = 'damyfloor_home';
+    $('content').value = '';
+    $('term').value = '';
+    $('custom').value = '';
+    sel.selectedIndex = 0;
+    campaignAuto = true;
+    update();
+  });
+
+  $('copyMain').addEventListener('click', e => copy($('mainLink').value, e.currentTarget));
+  $('copyMain2').addEventListener('click', e => copy($('mainLink').value, e.currentTarget));
+  $('copyUniversal').addEventListener('click', e => copy($('universal').value, e.currentTarget));
+  $('openMain').addEventListener('click', () => {
+    if ($('mainLink').value) window.open($('mainLink').value, '_blank', 'noopener');
+  });
+
+  document.querySelectorAll('.example button').forEach(b => {
+    b.addEventListener('click', () => {
+      $('custom').value = b.dataset.to;
+      sel.value = '';
+      update();
+    });
+  });
+
+  $('csv').addEventListener('click', () => {
+    const rows = [['Раздел','Ссылка']];
+    SECTIONS.forEach(s => rows.push([s.name, buildLink(s.path)]));
+    const csv = '\uFEFF' + rows.map(r => r.map(x => '"' + String(x).replace(/"/g,'""') + '"').join(';')).join('\r\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'damyfloor_utm_links.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  update();
+}
+
+(function(){
+  const qp = new URLSearchParams(location.search);
+  const to = qp.get('to');
+  if (to){
+    let raw = to.trim();
+    if (raw && !/^https?:\/\//i.test(raw) && /^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) raw = 'https://' + raw;
+    let target = null;
+    try {
+      const u = /^https?:\/\//i.test(raw) ? new URL(raw) : new URL(raw.startsWith('/') ? raw : '/' + raw, BASE);
+      if (isAllowed(u.hostname)){
+        UTM_KEYS.forEach(k => { const v = qp.get(k); if (v) u.searchParams.set(k, v); });
+        target = u.toString();
+      }
+    } catch(e){}
+    if (target){ location.replace(target); return; }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
